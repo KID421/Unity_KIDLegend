@@ -21,7 +21,10 @@ public class SwipingMenu : MonoBehaviour
 
     public void Swiping(Vector2 value)
     {
-        scrollRect.enabled = Input.mousePosition.x < Screen.width * 0.2f || Input.mousePosition.x > Screen.width * 0.8f;
+        bool control = Input.mousePosition.x < Screen.width * 0.2f || Input.mousePosition.x > Screen.width * 0.8f;
+        scrollRect.enabled = control;
+
+        if (!control) return;
 
         if (Input.GetKeyUp(KeyCode.Mouse0))
         {
