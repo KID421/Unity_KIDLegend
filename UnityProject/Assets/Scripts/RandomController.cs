@@ -1,44 +1,53 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
+[RequireComponent(typeof(AudioSource))]
 public class RandomController : MonoBehaviour
 {
     [Header("技能陣列")]
-    public RectTransform[] skills;
+    public Image imageSkill;
+    [Header("隨機圖片")]
+    public Sprite[] spriteBlurSkills;
+    [Header("速度"), Range(0.02f, 2f)]
+    public float speed = 0.1f;
+    [Header("次數"), Range(1, 10)]
+    public int count = 5;
+    [Header("正常技能圖片")]
+    public Sprite[] spriteSkills;
+    [Header("音效")]
+    public AudioClip sound;
 
+    private AudioSource aud;
 
-    private void Start()
+    private void Awake()
     {
-        int length = transform.childCount;
-        skills = new RectTransform[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            skills[i] = transform.GetChild(i).GetComponent<RectTransform>();
-        }
-
-        StartCoroutine(SlotEffect());
+        aud = GetComponent<AudioSource>();
     }
 
-    private IEnumerator SlotEffect()
+    private void OnEnable()
     {
-        int r = Random.Range(10, 30);
+        StartCoroutine(RandomSkill());
+    }
 
-        while (r > 0)
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
+    private IEnumerator RandomSkill()
+    {
+        for (int j = 0; j < count; j++)
         {
-            for (int i = 0; i < skills.Length; i++)
+            for (int i = 0; i < 16; i++)
             {
-                skills[i].anchoredPosition -= Vector2.up * 128;
-
-                if (skills[i].anchoredPosition.y < -192)
-                {
-                    skills[i].anchoredPosition = new Vector2(64, 704);
-                }
+                imageSkill.sprite = spriteBlurSkills[i];
+                aud.PlayOneShot(sound, 0.7f);
+                yield return new WaitForSeconds(speed);
             }
-
-            r--;
-
-            yield return new WaitForSeconds(1);
         }
+
+        int r = Random.Range(0, spriteSkills.Length);
+        imageSkill.sprite = spriteSkills[r];
     }
 }
