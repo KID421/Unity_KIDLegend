@@ -8,12 +8,11 @@ public class PlayerController : MonoBehaviour
     [Header("目標物件距離"), Range(1f, 3.5f)]
     public float targetDistance = 2f;
 
-    public PlayerData playerData;
-
     private Joystick joy;
     private Transform target;
     private Rigidbody rig;
     private Animator ani;
+    private LevelManager levelManager;
     #endregion
 
     #region 事件
@@ -24,12 +23,20 @@ public class PlayerController : MonoBehaviour
 
         joy = GameObject.Find("虛擬搖桿").GetComponent<Joystick>();
         target = GameObject.Find("目標物件").transform;
+        levelManager = GameObject.Find("遊戲管理器").GetComponent<LevelManager>();
     }
 
     private void FixedUpdate()
     {
         Move();
-        Turn();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.name == "傳送區域")
+        {
+            levelManager.StartCoroutine("LoadNextLevel");
+        }
     }
     #endregion
 
@@ -42,11 +49,8 @@ public class PlayerController : MonoBehaviour
 
         rig.AddForce(-joy.Horizontal * speed, 0, -joy.Vertical * speed);
         ani.SetBool("跑步開關", joy.Horizontal != 0 || joy.Vertical != 0);
-    }
 
-    private void Turn()
-    {
-        Vector3 pos = new Vector3(target.position.x, 0.5f, target.position.z);
+        pos.y = transform.position.y;
         transform.LookAt(pos);
     }
     #endregion
