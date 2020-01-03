@@ -11,4 +11,6 @@ public class EnemyData : ScriptableObject
     public float speed;
     [Header("攻擊冷卻時間"), Range(0.5f, 5f)]
     public float cd;
+    [Header("近距離攻擊延遲時間"), Range(0f, 5f)]
+    public float delay;
 }
